@@ -15,7 +15,7 @@ MAX_RESULTS = 5000
 # Issue 상세 조회 함수
 def getIssueDetail(issueMap):
     response = requests.get(
-        f"JIRA_URL/rest/api/2/issue/{issueMap['key']}",
+        f"{JIRA_URL}/rest/api/2/issue/{issueMap['key']}",
         headers={"Authorization":f"Bearer {TOKEN}"}    
     )
     #print('[########START####### Detail]')
@@ -80,17 +80,23 @@ def search(page, maxResults):
     print('maxResults', maxResults)
     print('total', total)
     #print('issues', response.json()['issues'])
-    issues = response.json()['issues'];
+    issues = response.json()['issues']
     print(type(issues))
     newList = []
     for (idx, issue) in enumerate(issues):
         #if idx > 0:
         #    break
-        map = {}
-        map['id'] = issue['id']
-        map['key'] = issue['key']
-        map['self'] = issue['self']
-        map = getIssueDetail(map)
+        param = {}
+        param['key'] = issue['key']
+
+        map = getIssueDetail(param)
+        map['issueTypeId'] = issue['fields']['issuetype']['id'] if issue['fields']['issuetype'] != None else None
+        map['issueTypeName'] = issue['fields']['issuetype']['name'] if issue['fields']['issuetype'] != None else None
+        map['issueTypeDescription'] = issue['fields']['issuetype']['description'] if issue['fields']['issuetype'] != None else None
+        map['created'] = issue['fields']['created']
+        map['updated'] = issue['fields']['updated']
+        map['resolutiondate'] = issue['fields']['resolutiondate']
+
         newList.append(map)
         if idx%100 == 0:
             print('[',idx,']#########################')
@@ -127,7 +133,7 @@ rsList = []
 rsList.extend(rs['list'])
 
 # Total까지 반복
-MAX_ITR = 0
+MAX_ITR = 20
 idx = 0
 while True:
     if(MAX_ITR <= idx):
