@@ -16,7 +16,7 @@ MAX_RESULTS = 5000
 def getIssueDetail(issueMap):
     response = requests.get(
         f"JIRA_URL/rest/api/2/issue/{issueMap['key']}",
-        headers={"Authorization":f"Bearer {TOKEN}}"}    
+        headers={"Authorization":f"Bearer {TOKEN}"}    
     )
     #print('[########START####### Detail]')
     #print(response.json())
@@ -127,7 +127,7 @@ rsList = []
 rsList.extend(rs['list'])
 
 # Total까지 반복
-MAX_ITR = 20
+MAX_ITR = 0
 idx = 0
 while True:
     if(MAX_ITR <= idx):
